@@ -5,7 +5,6 @@ import {createCardElement, handleDeleteCard, handleLikeCard} from "./components/
 import {clearValidation, enableValidation} from "./components/validation";
 import {
     addNewCard,
-    deleteCard,
     getInitialCards,
     getInitialProfile,
     updateProfileData,
@@ -46,45 +45,45 @@ let currentUserId;
 //Обработка отправки формы редактирования профиля
 function handleProfileFormSubmit(e){
     e.preventDefault();
-    const popupButton = profileForm.querySelector('.popup__button');
-    popupButton.textContent = 'Сохранение...';
+    renderLoading(profileForm, 'Сохранение...');
     updateProfileData(profileForm.name.value, profileForm.description.value)
-        .then(profileData => renderProfileData(profileData))
+        .then(profileData => {
+            renderProfileData(profileData);
+            closePopup(profileModal);
+        })
         .catch(reportError => console.log(reportError))
         .finally(() => {
-            closePopup(profileModal);
-            popupButton.textContent = 'Сохранить';
+            renderLoading(profileImageForm, 'Сохранить');
         });
 }
 
 //Обработка отправки формы создания карточки
 function handleCardFormSubmit(e){
     e.preventDefault();
-    const popupButton = cardForm.querySelector('.popup__button');
-    popupButton.textContent = 'Сохранение...';
+    renderLoading(cardForm, 'Сохранение...');
     addNewCard(cardForm['place-name'].value, cardForm.link.value)
-        .then(card => renderNewCard(card))
+        .then(card => {
+            renderNewCard(card);
+            closePopup(cardModal);
+        })
         .catch(reportError => console.log(reportError))
         .finally(() => {
-            closePopup(cardModal);
-            popupButton.textContent = 'Сохранить';
+            renderLoading(cardForm, 'Сохранить');
         });
 }
 
 //Обработка отправки формы смены фото профиля
 function handleProfileImageFormSubmit(e){
     e.preventDefault();
-    const popupButton = profileImageForm.querySelector('.popup__button');
-    popupButton.textContent = 'Сохранение...';
+    renderLoading(profileImageForm, 'Сохранение...');
     updateProfileImage(profileImageForm.link.value)
         .then(profileData => {
-            console.log(profileData);
             renderProfileData(profileData);
+            closePopup(profileImageModal);
         })
         .catch(reportError => console.log(reportError))
         .finally(() => {
-            closePopup(profileImageModal);
-            popupButton.textContent = 'Сохранить';
+            renderLoading(profileImageForm, 'Сохранить')
         });
 }
 
@@ -116,6 +115,11 @@ function handlePopupImage(e) {
     }
 }
 
+function renderLoading(popupForm, statusText){
+    const popupButton = popupForm.querySelector('.popup__button');
+    popupButton.textContent = statusText;
+}
+
 //Отрисовка данных профиля
 function renderProfileData(profileData){
     const profileElement = document.querySelector('.profile');
@@ -129,14 +133,30 @@ function renderProfileData(profileData){
 
 //Отрисовка данных карточек
 function renderCardsData(initialCards){
-    initialCards.forEach((data) => {
-        placesWrap.append(createCardElement(data, currentUserId, handleConfirmDeleteSubmit, handleLikeCard, handlePopupImage));
+    initialCards.forEach((card) => {
+        placesWrap.append(createCardElement(
+            {
+                card,
+                currentUserId,
+                onDelete: handleConfirmDeleteSubmit,
+                onLike: handleLikeCard,
+                onPopupImage: handlePopupImage
+            }
+        ));
     });
 }
 
 //Отрисовка новой карточки без перерисовки старых
 function renderNewCard(card){
-    placesWrap.prepend(createCardElement(card, currentUserId, handleConfirmDeleteSubmit, handleLikeCard, handlePopupImage   ));
+    placesWrap.prepend(createCardElement(
+        {
+            card,
+            currentUserId,
+            onDelete: handleConfirmDeleteSubmit,
+            onLike: handleLikeCard,
+            onPopupImage: handlePopupImage
+        }
+    ));
 }
 
 //Получение данных при инициализации

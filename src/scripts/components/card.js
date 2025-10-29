@@ -2,7 +2,7 @@ import {deleteCard, deleteLikeCard, likeCard} from "./api";
 
 export const cardTemplate = document.querySelector("#card-template").content.querySelector(".places__item");
 
-export function createCardElement(card, currentUserId, onDelete, onLike, onPopupImage) {
+export function createCardElement({card, currentUserId, onDelete, onLike, onPopupImage}) {
     const cardElement = cardTemplate.cloneNode(true);
     const deleteButton = cardElement.querySelector(".card__delete-button");
     const likeButton = cardElement.querySelector('.card__like-button');

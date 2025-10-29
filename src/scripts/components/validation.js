@@ -1,9 +1,3 @@
-const pattern = /^[A-Za-zА-Яа-яЁё\s\-,]*$/;
-
-const shouldCheckPattern = (inputElement) => {
-    return inputElement.dataset.validatePattern === "true";
-};
-
 export const showInputError = (formElement, inputElement, errorMessage, params) => {
     const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
     inputElement.classList.add(params.inputErrorClass);
@@ -19,10 +13,10 @@ export const hideInputError = (formElement, inputElement, params) => {
 };
 
 export const checkInputValidity = (formElement, inputElement, params) => {
-    if (!inputElement.validity.valid) {
-        showInputError(formElement, inputElement, inputElement.validationMessage, params);
-    } else if (shouldCheckPattern(inputElement) && !pattern.test(inputElement.value)) {
+    if (inputElement.validity.patternMismatch) {
         showInputError(formElement, inputElement, inputElement.dataset.errorMessage, params);
+    } else if (!inputElement.validity.valid) {
+        showInputError(formElement, inputElement, inputElement.validationMessage, params);
     } else {
         hideInputError(formElement, inputElement, params);
     }
@@ -30,17 +24,15 @@ export const checkInputValidity = (formElement, inputElement, params) => {
 
 export const hasInvalidInput = (inputList) => {
     return inputList.some(inputElement => {
-        return !inputElement.validity.valid || (shouldCheckPattern(inputElement) && !pattern.test(inputElement.value));
+        return !inputElement.validity.valid || inputElement.validity.patternMismatch;
     });
 };
 
 export const toggleButtonState = (inputList, buttonElement, params) => {
     if (hasInvalidInput(inputList)) {
-        buttonElement.classList.add(params.inactiveButtonClass);
-        buttonElement.disabled = true;
+        disableSubmitButton(buttonElement, params);
     } else {
-        buttonElement.classList.remove(params.inactiveButtonClass);
-        buttonElement.disabled = false;
+        enableSubmitButton(buttonElement, params);
     }
 };
 
@@ -74,3 +66,12 @@ export function clearValidation(formElement, params) {
 
     toggleButtonState(inputList, buttonElement, params);
 }
+const disableSubmitButton = (buttonElement, config) => {
+    buttonElement.classList.add(config.inactiveButtonClass);
+    buttonElement.disabled = true;
+};
+
+const enableSubmitButton = (buttonElement, config) => {
+    buttonElement.classList.remove(config.inactiveButtonClass);
+    buttonElement.disabled = false;
+};
