@@ -25,3 +25,11 @@
     line-height: 17px;
   }
 }
+
+.popup__button_disabled {
+  background: #ffffff;
+  color: #c0c0c0;
+  border: 1px solid #c0c0c0;
+  cursor: default;
+  pointer-events: none;
+}

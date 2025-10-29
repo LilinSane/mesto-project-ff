@@ -1,15 +1,41 @@
 .profile__image {
-  background-image: url('../../../images/avatar.jpg');
   width: 120px;
   height: 120px;
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
   background-size: cover;
-  /*Ковер тут симпатичнее контейна*/
   background-position: center;
   margin: 0 29px 0 0;
-  /*Макет очень кривоват, как считать этот отступ я хз. Проявите тут лояльность пока что*/
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile__image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0);
+  transition: background 0.3s ease;
+  z-index: 1; /* слой затемнения */
+}
+
+.profile__image:hover::after {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.profile__image_edit_icon_visible{
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile__image:hover .profile__image_edit_icon_visible{
+  visibility: visible;
+  opacity: 1;
+  z-index: 2;
 }
 
 @media screen and (max-width: 740px) {

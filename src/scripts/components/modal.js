@@ -1,5 +1,3 @@
-document.querySelectorAll('.modal');
-
 //Закрытие модального окна и удаление обработчиков закрытия
 export function closePopup(popup){
     popup.classList.remove('popup_is-opened');
